@@ -10,11 +10,36 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.android.material.snackbar.Snackbar
 import com.voxel.classbox.UI.WrapContentLinearLayoutManager
 import example.com.linetvtestdramaapp.config.AppConfig
 
 object Util {
 
+    /**
+     * Snackbar顯示網路變化
+     */
+    fun snackNetStatus(view: View, isNetOn: Boolean) {
+        val msg: String
+        val duration: Int
+        when (isNetOn) {
+            true -> {
+                msg = "網路已連線!"
+                duration = Snackbar.LENGTH_SHORT
+            }
+            
+            false -> {
+                msg = "網路已斷線!"
+                //為提醒使用者 : 網路未連線SnackBar不會消失
+                duration = Snackbar.LENGTH_INDEFINITE
+            }
+        }
+        Snackbar.make(view, msg, duration).show()
+    }
+
+    /**
+     * 顯示Toast
+     */
     fun mToast(msg: String) {
         Toast.makeText(AppConfig.instance.getAppContext(), msg, Toast.LENGTH_SHORT).show()
     }
@@ -24,7 +49,7 @@ object Util {
      */
     fun isNetworkAvailable(): Boolean {
         val context = AppConfig.instance.getAppContext()
-        
+
         var netAvailable = false
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -53,8 +78,7 @@ object Util {
      * @param recyclerView
      */
     fun setLinearRecyclerView(recyclerView: RecyclerView) {
-        val context: Context = AppConfig.instance.getAppContext()
-        val mLayoutManager = WrapContentLinearLayoutManager(context)
+        val mLayoutManager = WrapContentLinearLayoutManager(AppConfig.instance.getAppContext())
         recyclerView.layoutManager = mLayoutManager
         recyclerView.itemAnimator = DefaultItemAnimator()
     }
@@ -67,7 +91,7 @@ object Util {
     fun glideImgLoader(imgView: ImageView, url: String) {
         Glide.with(AppConfig.instance.getAppContext())
             .load(url)
-            .diskCacheStrategy(DiskCacheStrategy.ALL) //AUTOMATIC
+            .diskCacheStrategy(DiskCacheStrategy.ALL)
             .onlyRetrieveFromCache(false)
             .into(imgView)
     }

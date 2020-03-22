@@ -14,7 +14,6 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import android.widget.SearchView
-import com.google.android.material.snackbar.Snackbar
 import com.google.common.collect.Lists
 import example.com.linetvtestdramaapp.event.EventNetworkStatusChange
 import example.com.linetvtestdramaapp.serverApi.Data.SearchKey
@@ -26,19 +25,19 @@ class MainActivity : AppCompatActivity() {
     /**
      * 網路連線狀態
      */
-    private var localNetConnected: Boolean = Util.isNetworkAvailable()
+    private var localNetConnected: Boolean = false
 
     //EventBus
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onNetworkStatusChange(event: EventNetworkStatusChange) {
+    fun onNetStatusChange(event: EventNetworkStatusChange) {
         when (event.networkStatus) {
             true -> {
                 if (!localNetConnected) {
-                    Snackbar.make(btnLoadDramas, "網路已連線", Snackbar.LENGTH_SHORT).show()
+                    Util.snackNetStatus(btnLoadDramas, true)
                     localNetConnected = true
                 }
 
-                //如果戲劇資料庫沒有第一次抓的資料,且網路已回復,現在抓取戲劇資料
+                //如果戲劇資料庫還沒有資料,且網路已回復,現在抓取戲劇資料
                 if (getDramaDao().queryForAll().isEmpty()) {
                     DramaApi.getDramaList()
                 }
@@ -46,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             false -> {
                 if (localNetConnected) {
                     localNetConnected = false
-                    showSnackBarNetworkOff()
+                    Util.snackNetStatus(btnLoadDramas, false)
                 }
             }
         }
@@ -61,7 +60,6 @@ class MainActivity : AppCompatActivity() {
             getDramaDao().createOrUpdate(drama)
         }
     }
-
     //EventBus
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         init()
     }
- 
+
     override fun onPause() {
         super.onPause()
         if (EventBus.getDefault().isRegistered(this)) {
@@ -81,6 +79,12 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
+        }
+
+        localNetConnected = AppConfig.instance.getAppNetConnected()
+        if(!localNetConnected) {
+            //提示網路斷線
+            Util.snackNetStatus(btnLoadDramas, false)
         }
     }
 
@@ -97,9 +101,9 @@ class MainActivity : AppCompatActivity() {
      * 主頁面初始化
      */
     private fun init() {
-        localNetConnected = Util.isNetworkAvailable()
-        AppConfig.instance.setAppNetConnected(localNetConnected)
-        
+        AppConfig.instance.refreshAppNetConnected()
+        localNetConnected = AppConfig.instance.getAppNetConnected()
+
         Util.setLinearRecyclerView(dramaRecyclerView)
         dramaRecyclerView.adapter = dramaAdapter
 
@@ -109,12 +113,11 @@ class MainActivity : AppCompatActivity() {
         when (getDramaDao().queryForAll().isEmpty()) {
             //戲劇資料庫無資料,嘗試從server取回戲劇資料
             true -> {
-                when (localNetConnected) {
-                    true -> DramaApi.getDramaList()
-                    false -> showSnackBarNetworkOff()
+                if (localNetConnected) {
+                    DramaApi.getDramaList()
                 }
             }
-            //資料庫有資料
+            //戲劇資料庫有資料
             else -> {
                 updateDramaAdapter(getDramaDao().queryForAll())
             }
@@ -123,12 +126,12 @@ class MainActivity : AppCompatActivity() {
         val searchKeys = getSearchKeyDao().queryForAll()
         if (searchKeys.isNotEmpty()) {
             val keyword = searchKeys[0].key
-            updateSearchResult(keyword)
+            updateSearchResult(keyword, true)
         }
-        
-        if(!localNetConnected) {
-            //啟動時網路已斷線提示
-            showSnackBarNetworkOff()
+
+        if (!localNetConnected) {
+            // 啟動APP時網路已斷線提示
+            Util.snackNetStatus(btnLoadDramas, false)
         }
     }
 
@@ -137,15 +140,23 @@ class MainActivity : AppCompatActivity() {
      */
     private fun initSearchBar() {
         //搜尋框
-        searchView.queryHint = "輸入搜尋關鍵字"
+        searchView.queryHint = "請輸入搜尋關鍵字"
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
+                val userInput: String = searchView.query.toString().trim()
+               
+                if(userInput.isNotEmpty()) {
+                    updateSearchResult(userInput, false)
+                }
                 return false
             }
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                val userInput: String = searchView.query.toString()
-                updateSearchResult(userInput)
+                val userInput: String = searchView.query.toString().trim()
+                when (userInput.isNotEmpty()) {
+                    true -> updateSearchResult(userInput, true)
+                    false -> Util.mToast("請輸入關鍵字!")
+                 }
                 return false
             }
         })
@@ -169,16 +180,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-    
+
     /**
      * 搜尋結果更新到Adapter
      * userInput: 使用者輸入的字串
+     * isClickSubmit: 使用者
      */
-    private fun updateSearchResult(userInput: String) {
+    private fun updateSearchResult(userInput: String, isClickSubmit: Boolean) {
         val dramas: MutableList<Drama> = getDramaDao().queryForAll()
         var searchList: List<Drama> = Lists.newArrayList()
 
-        //搜尋字串集合(以" "空格拆開)
+        //搜尋字串清單集合(以" "空格拆開)
         val keys: List<String> = userInput.split(" ").filter { it.isNotEmpty() } //過濾出有內容的字串
         for (key in keys) {
             //過濾出劇名含有關鍵字的戲劇
@@ -195,30 +207,25 @@ class MainActivity : AppCompatActivity() {
                 searchKey.key = userInput
                 getSearchKeyDao().createOrUpdate(searchKey)
             }
-            false -> Util.mToast("找不到符合的戲劇!")
+            false -> if (isClickSubmit) Util.mToast("找不到符合的戲劇!")
         }
+        
+        //最後更新到戲劇Adapter
         updateDramaAdapter(searchList.toMutableList())
-    }
-
-    /**
-     * 提醒使用者:顯示不會消失的網路未連線SnackBar
-     */
-    private fun showSnackBarNetworkOff() {
-        Snackbar.make(btnLoadDramas, "網路已斷線", Snackbar.LENGTH_INDEFINITE).show()
     }
 
     /**
      * 戲劇Dao
      */
     private fun getDramaDao(): Dao<Drama, Int> {
-        return AppConfig.instance.getDramaDaoInstance()
+        return AppConfig.instance.getDramaDao()
     }
 
     /**
      * 查詢字Dao
      */
     private fun getSearchKeyDao(): Dao<SearchKey, String> {
-        return AppConfig.instance.getSearchKeyDaoInstance()
+        return AppConfig.instance.getSearchKeyDao()
     }
 
 }

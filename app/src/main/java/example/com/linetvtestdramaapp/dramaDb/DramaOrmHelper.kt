@@ -51,7 +51,10 @@ class DramaOrmHelper(context: Context?, factory: SQLiteDatabase.CursorFactory?)
         }
         return dramaDao as Dao<Drama, Int>
     }
-    
+
+    /**
+     * 取得 searchKeyDao
+     */
     @Throws(SQLException::class)
     fun getSearchKeyDao(): Dao<SearchKey, String> {
         searchKeyDao?.let {
