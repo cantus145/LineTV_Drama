@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <!-- font size -->
+    <dimen name="text_size_large">18sp</dimen> <!-- 大 -->
+    <dimen name="text_size_medium">16sp</dimen><!-- 中 -->
+    <dimen name="text_size_small">14sp</dimen><!-- 小 -->
+    <dimen name="text_size_tiny">12sp</dimen><!-- 極小 -->
+    <!-- font size -->
+</resources>
