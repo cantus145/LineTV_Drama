@@ -1,6 +1,7 @@
 package example.com.linetvtestdramaapp.serverApi
 
 import com.google.gson.JsonObject
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -18,6 +19,7 @@ class AppClientManager private constructor() {
         retrofit = Retrofit.Builder()
             .baseUrl(server)
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(CoroutineCallAdapterFactory()) //此行一定要加
             .client(okHttpClient)
             .build()
     }

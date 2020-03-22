@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.j256.ormlite.dao.Dao
 import example.com.linetvtestdramaapp.Adapter.DramaAdapter
 import example.com.linetvtestdramaapp.config.AppConfig
-import example.com.linetvtestdramaapp.event.EventDramaList
 import example.com.linetvtestdramaapp.serverApi.Data.Drama
 import example.com.linetvtestdramaapp.serverApi.DramaApi
 import example.com.linetvtestdramaapp.tool.Util
@@ -39,7 +38,7 @@ class MainActivity : AppCompatActivity() {
 
                 //如果戲劇資料庫還沒有資料,且網路已回復,現在抓取戲劇資料
                 if (getDramaDao().queryForAll().isEmpty()) {
-                    DramaApi.getDramaList()
+                    DramaApi.getDramaList { receivedDramasFromServer(it) }
                 }
             }
             false -> {
@@ -48,16 +47,6 @@ class MainActivity : AppCompatActivity() {
                     Util.snackNetStatus(btnLoadDramas, false)
                 }
             }
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onDramaList(event: EventDramaList) {
-        val list = event.dramaList
-        updateDramaAdapter(list)
-        for (drama in list) {
-            //存入資料庫
-            getDramaDao().createOrUpdate(drama)
         }
     }
     //EventBus
@@ -82,9 +71,20 @@ class MainActivity : AppCompatActivity() {
         }
 
         localNetConnected = AppConfig.instance.getAppNetConnected()
-        if(!localNetConnected) {
+        if (!localNetConnected) {
             //提示網路斷線
             Util.snackNetStatus(btnLoadDramas, false)
+        }
+    }
+
+    /**
+     * 接收server端回傳的戲劇清單
+     */
+    private fun receivedDramasFromServer(dramas: MutableList<Drama>) {
+        updateDramaAdapter(dramas)
+        for (drama in dramas) {
+            //存入資料庫
+            getDramaDao().createOrUpdate(drama)
         }
     }
 
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
             //戲劇資料庫無資料,嘗試從server取回戲劇資料
             true -> {
                 if (localNetConnected) {
-                    DramaApi.getDramaList()
+                    DramaApi.getDramaList { receivedDramasFromServer(it) }
                 }
             }
             //戲劇資料庫有資料
@@ -144,8 +144,8 @@ class MainActivity : AppCompatActivity() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
                 val userInput: String = searchView.query.toString().trim()
-               
-                if(userInput.isNotEmpty()) {
+
+                if (userInput.isNotEmpty()) {
                     updateSearchResult(userInput, false)
                 }
                 return false
@@ -156,7 +156,7 @@ class MainActivity : AppCompatActivity() {
                 when (userInput.isNotEmpty()) {
                     true -> updateSearchResult(userInput, true)
                     false -> Util.mToast("請輸入關鍵字!")
-                 }
+                }
                 return false
             }
         })
@@ -170,8 +170,8 @@ class MainActivity : AppCompatActivity() {
             Util.hideSoftKeyboard(btnLoadDramas)
             when (localNetConnected) {
                 //有網路時 
-                true -> DramaApi.getDramaList()
-
+                true -> DramaApi.getDramaList { receivedDramasFromServer(it) }
+                
                 //無網路時,從資料庫取戲劇資料
                 else -> {
                     updateDramaAdapter(getDramaDao().queryForAll())
@@ -209,7 +209,7 @@ class MainActivity : AppCompatActivity() {
             }
             false -> if (isClickSubmit) Util.mToast("找不到符合的戲劇!")
         }
-        
+
         //最後更新到戲劇Adapter
         updateDramaAdapter(searchList.toMutableList())
     }
