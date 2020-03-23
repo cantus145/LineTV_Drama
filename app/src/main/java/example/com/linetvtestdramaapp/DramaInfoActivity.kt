@@ -14,6 +14,9 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
+/**
+ * 「戲劇資訊」頁面
+ */
 class DramaInfoActivity : AppCompatActivity() {
     
     @Subscribe(threadMode = ThreadMode.MAIN)
