@@ -2,6 +2,7 @@ package example.com.linetvtestdramaapp
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Window
 import example.com.linetvtestdramaapp.config.AppConfig
 import example.com.linetvtestdramaapp.event.EventNetworkStatusChange
 import example.com.linetvtestdramaapp.serverApi.Data.Drama
@@ -22,7 +23,9 @@ class DramaInfoActivity : AppCompatActivity() {
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_drama_info)
+        
         init()
     }
 
