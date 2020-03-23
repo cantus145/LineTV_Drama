@@ -19,7 +19,7 @@ class AppClientManager private constructor() {
         retrofit = Retrofit.Builder()
             .baseUrl(server)
             .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(CoroutineCallAdapterFactory()) //此行一定要加
+            .addCallAdapterFactory(CoroutineCallAdapterFactory()) // Kotlin協程
             .client(okHttpClient)
             .build()
     }

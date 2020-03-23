@@ -1,11 +1,13 @@
 package example.com.linetvtestdramaapp.tool
 
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -14,27 +16,46 @@ import com.google.android.material.snackbar.Snackbar
 import com.voxel.classbox.UI.WrapContentLinearLayoutManager
 import example.com.linetvtestdramaapp.config.AppConfig
 
+
 object Util {
 
     /**
      * Snackbar顯示網路變化
      */
-    fun snackNetStatus(view: View, isNetOn: Boolean) {
+    fun snackNetStatus(view: View, isNetOK: Boolean) {
+
+        /**
+         * 開啟網路設定物件
+         */
+        class CheckWifiConfig : View.OnClickListener {
+            override fun onClick(v: View) {
+                val intent = Intent(android.provider.Settings.ACTION_WIFI_SETTINGS)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                startActivity(AppConfig.instance.getAppContext(), intent, null)
+            }
+        }
+        
         val msg: String
         val duration: Int
-        when (isNetOn) {
+        when (isNetOK) {
             true -> {
                 msg = "網路已連線!"
                 duration = Snackbar.LENGTH_SHORT
             }
-            
+
             false -> {
                 msg = "網路已斷線!"
                 //為提醒使用者 : 網路未連線SnackBar不會消失
                 duration = Snackbar.LENGTH_INDEFINITE
             }
         }
-        Snackbar.make(view, msg, duration).show()
+
+        val snackBar = Snackbar.make(view, msg, duration)
+        if (!isNetOK) { 
+            //加上使用者檢查網路按鈕
+            snackBar.setAction("請檢查網路", CheckWifiConfig())
+        }
+        snackBar.show()
     }
 
     /**

@@ -8,6 +8,7 @@ import example.com.linetvtestdramaapp.serverApi.Data.Drama
 import example.com.linetvtestdramaapp.tool.Util
 import kotlinx.android.synthetic.main.activity_drama_info.*
 import kotlinx.android.synthetic.main.activity_drama_info.imgDrama
+import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -36,6 +37,11 @@ class DramaInfoActivity : AppCompatActivity() {
         super.onResume()
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this)
+        }
+
+        if(!AppConfig.instance.getAppNetConnected()) {
+            //提示網路斷線
+            Util.snackNetStatus(btnLoadDramas, false)
         }
     }
 

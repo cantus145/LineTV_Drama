@@ -1,31 +1,32 @@
 package example.com.linetvtestdramaapp
 
 import android.os.Bundle
+import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.common.collect.Lists
 import com.j256.ormlite.dao.Dao
 import example.com.linetvtestdramaapp.Adapter.DramaAdapter
 import example.com.linetvtestdramaapp.config.AppConfig
+import example.com.linetvtestdramaapp.event.EventNetworkStatusChange
 import example.com.linetvtestdramaapp.serverApi.Data.Drama
+import example.com.linetvtestdramaapp.serverApi.Data.SearchKey
 import example.com.linetvtestdramaapp.serverApi.DramaApi
 import example.com.linetvtestdramaapp.tool.Util
 import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import android.widget.SearchView
-import com.google.common.collect.Lists
-import example.com.linetvtestdramaapp.event.EventNetworkStatusChange
-import example.com.linetvtestdramaapp.serverApi.Data.SearchKey
+
 
 class MainActivity : AppCompatActivity() {
-
+    
     private val dramaAdapter: DramaAdapter = DramaAdapter()
-
+    
     /**
      * 網路連線狀態
      */
     private var localNetConnected: Boolean = false
-
+    
     //EventBus
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onNetStatusChange(event: EventNetworkStatusChange) {
@@ -50,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     //EventBus
-
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -139,8 +140,9 @@ class MainActivity : AppCompatActivity() {
      * 初始化搜尋Bar
      */
     private fun initSearchBar() {
-        //搜尋框
+        //搜尋框         
         searchView.queryHint = "請輸入搜尋關鍵字"
+        
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextChange(newText: String): Boolean {
                 val userInput: String = searchView.query.toString().trim()
@@ -159,9 +161,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 return false
             }
-        })
+        })         
     }
-
+    
+    
     /**
      * 初始化載入戲劇清單按鈕
      */
@@ -184,7 +187,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * 搜尋結果更新到Adapter
      * userInput: 使用者輸入的字串
-     * isClickSubmit: 使用者
+     * isClickSubmit: 使用者是否按下搜尋按鈕
      */
     private fun updateSearchResult(userInput: String, isClickSubmit: Boolean) {
         val dramas: MutableList<Drama> = getDramaDao().queryForAll()
@@ -227,5 +230,5 @@ class MainActivity : AppCompatActivity() {
     private fun getSearchKeyDao(): Dao<SearchKey, String> {
         return AppConfig.instance.getSearchKeyDao()
     }
-
+ 
 }
