@@ -4,6 +4,7 @@ import java.io.Serializable
 import com.google.gson.annotations.SerializedName
 import com.j256.ormlite.field.DatabaseField
 import com.j256.ormlite.table.DatabaseTable
+import example.com.linetvtestdramaapp.tool.Util
 
 /**
  *  (1)戲劇物件
@@ -26,14 +27,13 @@ data class Drama(
     @SerializedName("name")
     var name: String = "",
 
-
     /**
      * 出版日期
      */
     @DatabaseField(columnName = "created_at", canBeNull = false)
     @SerializedName("created_at")
     var created_at: String = "",
-
+    
     /**
      * 觀看次數
      */

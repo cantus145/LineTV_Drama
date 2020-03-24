@@ -9,7 +9,6 @@ import example.com.linetvtestdramaapp.serverApi.Data.Drama
 import example.com.linetvtestdramaapp.tool.Util
 import kotlinx.android.synthetic.main.activity_drama_info.*
 import kotlinx.android.synthetic.main.activity_drama_info.imgDrama
-import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -47,7 +46,7 @@ class DramaInfoActivity : AppCompatActivity() {
 
         if(!AppConfig.instance.getAppNetConnected()) {
             //提示網路斷線
-            Util.snackNetStatus(btnLoadDramas, false)
+            Util.snackNetStatus(txvName, false)
         }
     }
 
@@ -60,7 +59,7 @@ class DramaInfoActivity : AppCompatActivity() {
         Util.glideImgLoader(imgDrama, drama.thumb)
 
         val name = "出版日期: " + drama.name
-        val createdTime = "出版日期: " + drama.created_at
+        val createdTime = "出版日期: " + Util.dataTimeFormat(drama.created_at)
         val rating = "評分: " + drama.rating.toBigDecimal().toPlainString()
         val totalViews =  "觀看次數: " + drama.total_views.toString()
         txvName.text = name

@@ -2,8 +2,11 @@ package example.com.linetvtestdramaapp.tool
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.ConnectivityManager
+import android.util.Log
 import android.view.View
+import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.Toast
@@ -14,8 +17,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.snackbar.Snackbar
 import com.voxel.classbox.UI.WrapContentLinearLayoutManager
-import example.com.linetvtestdramaapp.config.AppConfig
 
+import example.com.linetvtestdramaapp.config.AppConfig
+import org.joda.time.format.DateTimeFormat
 
 object Util {
 
@@ -34,7 +38,7 @@ object Util {
                 startActivity(AppConfig.instance.getAppContext(), intent, null)
             }
         }
-        
+
         val msg: String
         val duration: Int
         when (isNetOK) {
@@ -51,9 +55,9 @@ object Util {
         }
 
         val snackBar = Snackbar.make(view, msg, duration)
-        if (!isNetOK) { 
+        if (!isNetOK) {
             //加上使用者檢查網路按鈕
-            snackBar.setAction("請檢查網路", CheckWifiConfig())
+            snackBar.setAction("請檢查網路", CheckWifiConfig()).setActionTextColor(Color.YELLOW)
         }
         snackBar.show()
     }
@@ -115,5 +119,33 @@ object Util {
             .diskCacheStrategy(DiskCacheStrategy.ALL)
             .onlyRetrieveFromCache(false)
             .into(imgView)
+    }
+
+    /**
+     * RecyclerView資料項目出現的動畫
+     */
+    fun setAnimation(view: View, animResId: Int?, position: Int, lastPosition: Int): Int {
+        animResId ?: return position
+
+        return when {
+            position > lastPosition -> {
+                // If the bound view wasn't previously displayed on screen, it's animated
+                view.startAnimation(
+                    AnimationUtils.loadAnimation(
+                        AppConfig.instance.getAppContext(), animResId
+                    )
+                )
+                position
+            }
+            else -> lastPosition
+        }
+    }
+
+    /**
+     * 日期時間format
+     */
+    fun dataTimeFormat(dateTime: String): String {
+        // "2017-11-23T02:04.000Z"
+        return dateTime.replace("T", "  ").replace(".000Z", "")
     }
 }

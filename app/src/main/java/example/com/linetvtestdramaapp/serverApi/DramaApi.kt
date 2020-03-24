@@ -8,7 +8,6 @@ import example.com.linetvtestdramaapp.serverApi.Data.Drama
 import org.json.JSONArray
 import org.json.JSONObject
 
-
 /**
  * 從Server 取得戲劇資料Api
  */

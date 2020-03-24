@@ -1,19 +1,25 @@
 package example.com.linetvtestdramaapp.Adapter
 
-    import android.content.Context
-    import android.content.Intent
-    import android.view.LayoutInflater
-    import android.view.ViewGroup
-    import androidx.recyclerview.widget.RecyclerView
-    import com.google.common.collect.Lists
-    import example.com.linetvtestdramaapp.DramaInfoActivity
-    import example.com.linetvtestdramaapp.R
-    import example.com.linetvtestdramaapp.config.AppConfig
-    import example.com.linetvtestdramaapp.serverApi.Data.Drama
-    import example.com.linetvtestdramaapp.tool.Util
-    import example.com.linetvtestdramaapp.viewHolder.DramaViewHolder
+import android.content.Context
+import android.content.Intent
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.google.common.collect.Lists
+import example.com.linetvtestdramaapp.DramaInfoActivity
+import example.com.linetvtestdramaapp.R
+import example.com.linetvtestdramaapp.config.AppConfig
+import example.com.linetvtestdramaapp.serverApi.Data.Drama
+import example.com.linetvtestdramaapp.tool.Util
+import example.com.linetvtestdramaapp.viewHolder.DramaViewHolder
 
-    class DramaAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class DramaAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+    /**
+     * 動畫(底部往上)
+     */
+    private var animResId: Int = R.anim.slide_in_from_bottom
+    private var lastPosition = -1
 
     /**
      * 戲劇清單
@@ -32,16 +38,19 @@ package example.com.linetvtestdramaapp.Adapter
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        //生動畫效果
+        lastPosition = Util.setAnimation(holder.itemView , animResId, position, lastPosition)
+        
         val dramaHolder = holder as DramaViewHolder
         val drama: Drama = dramaList[position]
         Util.glideImgLoader(dramaHolder.imgDrama, drama.thumb)
         dramaHolder.txvDramaName.text = drama.name
-        
+
         val dramaRating = "評分: " + drama.rating.toBigDecimal().toPlainString()
-        val dramaCreated = "出版日期: " + drama.created_at
+        val dramaCreated = "出版日期: " + Util.dataTimeFormat(drama.created_at)
         dramaHolder.txvDramaRating.text = dramaRating
         dramaHolder.txvDramaCreated.text = dramaCreated
-        
+
         dramaHolder.itemView.setOnClickListener {
             val context: Context = AppConfig.instance.getAppContext()
             val intent = Intent()
@@ -49,15 +58,16 @@ package example.com.linetvtestdramaapp.Adapter
             intent.setClass(context, DramaInfoActivity::class.java)
             intent.putExtra("Drama", drama)
             context.startActivity(intent)
-        } 
+        }
     }
-        
+
     fun addDramaList(list: MutableList<Drama>) {
         dramaList.addAll(list)
     }
 
     fun clearList() {
         dramaList.clear()
+        lastPosition = -1
     }
 
 }

@@ -62,11 +62,6 @@ class AppConfig: Application() {
      * 取回網路是否連線
      */
     fun getAppNetConnected(): Boolean {
-        val networkNow = Util.isNetworkAvailable()
-        if(appNetConnected != networkNow) {
-            appNetConnected = networkNow
-        }
-        
         return appNetConnected
     }
 

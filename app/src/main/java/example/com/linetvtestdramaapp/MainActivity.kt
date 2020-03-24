@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
                     localNetConnected = true
                 }
 
-                //如果戲劇資料庫還沒有資料,且網路已回復,現在抓取戲劇資料
+                //如果 戲劇Database 還沒有資料,且網路已回復,現在抓取戲劇資料
                 if (getDramaDao().queryForAll().isEmpty()) {
                     DramaApi.getDramaList { receivedDramasFromServer(it) }
                 }
@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
     private fun receivedDramasFromServer(dramas: MutableList<Drama>) {
         updateDramaAdapter(dramas)
         for (drama in dramas) {
-            //存入資料庫
+            //存入 戲劇Database 
             getDramaDao().createOrUpdate(drama)
         }
     }
@@ -114,24 +114,36 @@ class MainActivity : AppCompatActivity() {
         initBtnLoadDramas()
 
         when (getDramaDao().queryForAll().isEmpty()) {
-            //戲劇資料庫無資料,嘗試從server取回戲劇資料
+            // 戲劇Database 無資料,嘗試從server取回戲劇資料
             true -> {
                 if (localNetConnected) {
                     DramaApi.getDramaList { receivedDramasFromServer(it) }
                 }
             }
-            //戲劇資料庫有資料
-            else -> {
-                updateDramaAdapter(getDramaDao().queryForAll())
+            
+            // 戲劇Database 有資料
+            false -> {
+                val searchKeys = getSearchKeyDao().queryForAll() // 上次搜尋關鍵字
+                when(searchKeys.isEmpty()) {
+                    true -> updateDramaAdapter(getDramaDao().queryForAll()) //載入全部戲劇資料                    
+                    false -> {
+                        val keyword = searchKeys[0].key
+                        searchView.setQuery(keyword,false) //搜尋輸入框填入上次關鍵字
+                        updateSearchResult(keyword, true) //載入上次搜尋的結果
+                        Util.hideSoftKeyboard(searchView)
+                    }   
+                }
             }
         }
 
+        //使用上次搜尋處理
         val searchKeys = getSearchKeyDao().queryForAll()
         if (searchKeys.isNotEmpty()) {
             val keyword = searchKeys[0].key
+            searchView.setQuery(keyword,false) //自動填入上次關鍵字
             updateSearchResult(keyword, true)
         }
-
+        
         if (!localNetConnected) {
             // 啟動APP時網路已斷線提示
             Util.snackNetStatus(btnLoadDramas, false)
@@ -177,10 +189,9 @@ class MainActivity : AppCompatActivity() {
                 //有網路時 
                 true -> DramaApi.getDramaList { receivedDramasFromServer(it) }
                 
-                //無網路時,從資料庫取戲劇資料
+                //無網路時,從戲劇Database取戲劇資料
                 else -> {
                     updateDramaAdapter(getDramaDao().queryForAll())
-                    Util.mToast("網路已斷線! \n列表為本機儲存資料")
                 }
             }
         }
@@ -207,7 +218,7 @@ class MainActivity : AppCompatActivity() {
 
         when (searchList.isNotEmpty()) {
             true -> {
-                //關鍵字有找到符合的戲劇=>才把關鍵字存入資料庫
+                //關鍵字有找到符合的戲劇=>才把關鍵字存入關鍵字資料庫
                 val searchKey = SearchKey()
                 searchKey.key = userInput
                 getSearchKeyDao().createOrUpdate(searchKey)
