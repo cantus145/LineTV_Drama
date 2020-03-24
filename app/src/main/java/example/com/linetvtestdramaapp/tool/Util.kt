@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.net.ConnectivityManager
-import android.util.Log
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.inputmethod.InputMethodManager
@@ -17,9 +16,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.snackbar.Snackbar
 import com.voxel.classbox.UI.WrapContentLinearLayoutManager
-
 import example.com.linetvtestdramaapp.config.AppConfig
-import org.joda.time.format.DateTimeFormat
 
 object Util {
 

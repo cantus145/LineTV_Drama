@@ -70,9 +70,6 @@ dependencies {
 
     //A powerful image downloading and caching library for Android
     implementation 'com.squareup.picasso:picasso:2.71828'
-    
-    //JODA time
-    implementation 'net.danlew:android.joda:2.9.9.3'
 
     //Recyclerview
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
