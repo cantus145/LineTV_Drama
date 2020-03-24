@@ -5,7 +5,6 @@ import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.google.common.collect.Lists
 import example.com.linetvtestdramaapp.DramaInfoActivity
 import example.com.linetvtestdramaapp.R
 import example.com.linetvtestdramaapp.config.AppConfig
@@ -24,7 +23,7 @@ class DramaAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     /**
      * 戲劇清單
      */
-    var dramaList = Lists.newArrayList<Drama>()
+    var dramaList: MutableList<Drama> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val dramaView = LayoutInflater.from(parent.context).inflate(

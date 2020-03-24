@@ -28,8 +28,7 @@ object DramaApi {
                 call: retrofit2.Call<JsonObject>,
                 response: retrofit2.Response<JsonObject>) {
                 val jsonArray: JSONArray = JSONObject(response.body()!!.toString()).getJSONArray("data")
-                val dramaList: MutableList<Drama> =
-                    Gson().fromJson(jsonArray.toString(), dramaListType)
+                val dramaList: MutableList<Drama> = Gson().fromJson(jsonArray.toString(), dramaListType)
 
                 //Kotlin協程(以同步的方式操作非同步的事)
                 callback(dramaList)
