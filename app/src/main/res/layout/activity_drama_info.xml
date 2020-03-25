@@ -11,15 +11,17 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.6"/>
+        app:layout_constraintGuide_percent="0.65"/>
     
     <ImageView
         android:id="@+id/imgDrama"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         android:contentDescription="@string/desc"
         app:layout_constraintBottom_toBottomOf="@+id/guidelineVer"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintDimensionRatio="10:14"/>
 
@@ -27,44 +29,44 @@
         android:id="@+id/txvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="12dp"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_medium"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imgDrama"
         app:layout_constraintTop_toBottomOf="@+id/imgDrama" />
 
     <TextView
         android:id="@+id/txvRating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="12dp"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_medium"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imgDrama"
         app:layout_constraintTop_toBottomOf="@+id/txvName" />
 
     <TextView
         android:id="@+id/txvCreated"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="12dp"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_medium"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imgDrama"
         app:layout_constraintTop_toBottomOf="@+id/txvRating" />
 
     <TextView
         android:id="@+id/txvTotalViews"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="12dp"
         android:textColor="@color/black"
         android:textSize="@dimen/text_size_medium"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imgDrama"
         app:layout_constraintTop_toBottomOf="@+id/txvCreated" />
     
 </androidx.constraintlayout.widget.ConstraintLayout>
