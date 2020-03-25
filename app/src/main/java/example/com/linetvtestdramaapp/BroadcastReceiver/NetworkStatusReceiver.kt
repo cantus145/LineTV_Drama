@@ -21,6 +21,7 @@ class NetworkStatusReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, ıntent: Intent) {
         val newConnected = Util.isNetworkAvailable()
         
+        // 判斷網路狀態是否發生改變(發生反向動作時=>進行處理)
         if (AppConfig.instance.getAppNetConnected() != newConnected) {
             
             //寫入最新網路狀態到AppConfig
