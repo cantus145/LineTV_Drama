@@ -18,7 +18,8 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 /**
- * 列出所有資料中的戲劇頁面,並可以可以關鍵字過濾戲劇
+ * APP啟動主頁面
+ * 列出所有資料中的戲劇,並可以可以關鍵字過濾戲劇
  */
 class MainActivity : AppCompatActivity() {
 
