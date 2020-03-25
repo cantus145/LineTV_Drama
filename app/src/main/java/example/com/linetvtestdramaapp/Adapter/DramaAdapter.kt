@@ -37,21 +37,25 @@ class DramaAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        //生動畫效果
-        lastPosition = Util.setAnimation(holder.itemView , animResId, position, lastPosition)
-        
+        val context: Context = AppConfig.instance.getAppContext()
+
+        //動畫效果
+        lastPosition = Util.setAnimation(holder.itemView, animResId, position, lastPosition)
+
         val dramaHolder = holder as DramaViewHolder
         val drama: Drama = dramaList[position]
         Util.glideImgLoader(dramaHolder.imgDrama, drama.thumb)
         dramaHolder.txvDramaName.text = drama.name
 
-        val dramaRating = "評分: " + drama.rating.toBigDecimal().toPlainString()
-        val dramaCreated = "出版日期: " + Util.dataTimeFormat(drama.created_at)
+        val dramaRating =
+            context.resources.getString(R.string.rating) + ": " + drama.rating.toBigDecimal().toPlainString()
+        val dramaCreated =
+            context.resources.getString(R.string.create_date) + ": " + Util.dataTimeFormat(drama.created_at)
+        
         dramaHolder.txvDramaRating.text = dramaRating
         dramaHolder.txvDramaCreated.text = dramaCreated
 
         dramaHolder.itemView.setOnClickListener {
-            val context: Context = AppConfig.instance.getAppContext()
             val intent = Intent()
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             intent.setClass(context, DramaInfoActivity::class.java)

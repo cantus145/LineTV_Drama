@@ -1,10 +1,9 @@
 package example.com.linetvtestdramaapp.serverApi.Data
 
-import java.io.Serializable
 import com.google.gson.annotations.SerializedName
 import com.j256.ormlite.field.DatabaseField
 import com.j256.ormlite.table.DatabaseTable
-import example.com.linetvtestdramaapp.tool.Util
+import java.io.Serializable
 
 /**
  *  (1)戲劇物件

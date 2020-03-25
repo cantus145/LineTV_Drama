@@ -16,17 +16,26 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.snackbar.Snackbar
 import com.voxel.classbox.UI.WrapContentLinearLayoutManager
+import example.com.linetvtestdramaapp.R
 import example.com.linetvtestdramaapp.config.AppConfig
 
 object Util {
 
     /**
-     * Snackbar顯示網路變化
+     * 顯示Toast
+     */
+    fun mToast(msg: String) {
+        Toast.makeText(AppConfig.instance.getAppContext(), msg, Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * 用SnackBar顯示網路異常狀態
      */
     fun snackNetStatus(view: View, isNetOK: Boolean) {
+        val context: Context = AppConfig.instance.getAppContext()
 
         /**
-         * 開啟網路設定物件
+         * 開啟手機網路設定
          */
         class CheckWifiConfig : View.OnClickListener {
             override fun onClick(v: View) {
@@ -40,31 +49,28 @@ object Util {
         val duration: Int
         when (isNetOK) {
             true -> {
-                msg = "網路已連線!"
+                msg = context.resources.getString(R.string.net_is_on) //網路已連線
                 duration = Snackbar.LENGTH_SHORT
             }
 
             false -> {
-                msg = "網路已斷線!"
-                //為提醒使用者 : 網路未連線SnackBar不會消失
+                msg = context.resources.getString(R.string.net_is_off) //網路已斷線
+                //提醒使用者 : 網路未連線SnackBar持續顯示於螢幕上
                 duration = Snackbar.LENGTH_INDEFINITE
             }
         }
 
         val snackBar = Snackbar.make(view, msg, duration)
         if (!isNetOK) {
-            //加上使用者檢查網路按鈕
-            snackBar.setAction("請檢查網路", CheckWifiConfig()).setActionTextColor(Color.YELLOW)
+            //加上使用者 檢查網路 按鈕
+            snackBar.setAction(
+                context.resources.getString(R.string.check_network),
+                CheckWifiConfig()
+            ).setActionTextColor(Color.YELLOW)
         }
         snackBar.show()
     }
 
-    /**
-     * 顯示Toast
-     */
-    fun mToast(msg: String) {
-        Toast.makeText(AppConfig.instance.getAppContext(), msg, Toast.LENGTH_SHORT).show()
-    }
 
     /**
      * @return 網路是否有連線

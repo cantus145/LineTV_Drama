@@ -16,10 +16,10 @@ import java.sql.SQLException
 class DramaOrmHelper(context: Context?, factory: SQLiteDatabase.CursorFactory?) 
     : OrmLiteSqliteOpenHelper(context, "drama.db", factory, 1) {
 
-    //戲劇清單表
+    //戲劇清單表Dao
     private var dramaDao: Dao<Drama, Int>? = null
     
-    //使用者搜尋的關鍵字
+    //使用者搜尋的關鍵字Dao
     private var searchKeyDao: Dao<SearchKey, String>? = null
 
     override fun onCreate(database: SQLiteDatabase?, connectionSource: ConnectionSource?) {
