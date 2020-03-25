@@ -58,7 +58,7 @@ class DramaInfoActivity : AppCompatActivity() {
         val drama: Drama = intent.getSerializableExtra("Drama") as Drama
         Util.glideImgLoader(imgDrama, drama.thumb)
 
-        val name = "出版日期: " + drama.name
+        val name = drama.name
         val createdTime = "出版日期: " + Util.dataTimeFormat(drama.created_at)
         val rating = "評分: " + drama.rating.toBigDecimal().toPlainString()
         val totalViews =  "觀看次數: " + drama.total_views.toString()
