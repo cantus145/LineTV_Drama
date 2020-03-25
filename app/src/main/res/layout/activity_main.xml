@@ -10,7 +10,7 @@
         android:id="@+id/btnLoadDramas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Load戲劇"
+        android:text="列全部戲劇"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
     
