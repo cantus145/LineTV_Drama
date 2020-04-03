@@ -12,7 +12,7 @@ import org.json.JSONObject
  * 從Server 取得戲劇資料Api
  */
 object DramaApi {
-    val TAG: String = "TAG"
+    val TAG: String = "DramaApi"
 
     private val dramaListType = object : TypeToken<List<Drama>>() {}.type
 
@@ -29,13 +29,11 @@ object DramaApi {
                 response: retrofit2.Response<JsonObject>) {
                 val jsonArray: JSONArray = JSONObject(response.body()!!.toString()).getJSONArray("data")
                 val dramaList: MutableList<Drama> = Gson().fromJson(jsonArray.toString(), dramaListType)
-
-                //Kotlin協程(以同步的方式操作非同步的事)
                 callback(dramaList)
             }
             
             override fun onFailure(call: retrofit2.Call<JsonObject>, t: Throwable) {
-                Log.e("tag", "onFailure")
+                Log.e(TAG, "onFailure")
             }
         })
     }
